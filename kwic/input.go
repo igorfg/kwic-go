@@ -4,7 +4,7 @@ import "os"
 import "log"
 import "bufio"
 
-func Input(file_name string) ([]string, error) {
+func ReadFile(file_name string) ([]string, error) {
 	var lines []string
 
 	file, err := os.Open(file_name)
