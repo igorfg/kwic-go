@@ -5,10 +5,13 @@ import "bufio"
 import "os"
 import "log"
 
+// FileBasedStorageManager : struct que herda da interface DataStorageManager
+// para leitura de arquivos
 type FileBasedStorageManager struct {
 	lines []string
 }
 
+// Init : Inicializa a estrutura de linhas a partir da leitura de arquivos
 func (f *FileBasedStorageManager) Init() {
 	var filePath string
 
@@ -28,10 +31,12 @@ func (f *FileBasedStorageManager) Init() {
 	}
 }
 
+// Line : Retorna a linha baseada no indice index passado
 func (f *FileBasedStorageManager) Line(index int) string {
 	return f.lines[index]
 }
 
+// Length : Retorna a quantidade de linhas lidas do arquivo
 func (f *FileBasedStorageManager) Length() int {
 	return len(f.lines)
 }

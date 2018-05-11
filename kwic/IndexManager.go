@@ -3,8 +3,10 @@ package kwic
 import "github.com/igorfg/kwic-go/tuple"
 import "sort"
 
+// Tuple : criacao de uma struct do tipo tupla
 type Tuple tuple.Tuple
 
+// IndexManager : struct para armazenar o hash de palavras
 type IndexManager struct {
 	hashTable map[string][]Tuple
 }
@@ -16,7 +18,6 @@ func (im *IndexManager) init() {
 func (im *IndexManager) isEmpty() bool {
 	return len(im.hashTable) == 0
 }
-
 func (im *IndexManager) hash(word string, line string, pos int) {
 	tupla := Tuple{First: line, Second: pos}
 
