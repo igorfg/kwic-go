@@ -21,10 +21,11 @@ func main() {
 	}
 
 	// sortedWords := im.SortedWords()
+	// wordShift := kwic.WordShift{}
 
-	// for w := range sortedWords {
-	// 	for tuple := range im.OccurencesOfWord(w) {
-	//
+	// for _, w := range sortedWords {
+	// 	for _, tuple := range im.OccurencesOfWord(w) {
+
 	// 	}
 	// }
 
