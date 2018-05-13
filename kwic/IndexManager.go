@@ -11,14 +11,15 @@ type IndexManager struct {
 	hashTable map[string][]Tuple
 }
 
-func (im *IndexManager) init() {
+func (im *IndexManager) Init() {
 	im.hashTable = make(map[string][]Tuple)
 }
 
-func (im *IndexManager) isEmpty() bool {
+func (im *IndexManager) IsEmpty() bool {
 	return len(im.hashTable) == 0
 }
-func (im *IndexManager) hash(word string, line string, pos int) {
+
+func (im *IndexManager) Hash(word string, line string, pos int) {
 	tupla := Tuple{First: line, Second: pos}
 
 	if _, exists := im.hashTable[word]; exists {
@@ -28,11 +29,11 @@ func (im *IndexManager) hash(word string, line string, pos int) {
 	}
 }
 
-func (im *IndexManager) occurencesOfWord(word string) []Tuple {
+func (im *IndexManager) OccurencesOfWord(word string) []Tuple {
 	return im.hashTable[word]
 }
 
-func (im *IndexManager) sortedWords() []string {
+func (im *IndexManager) SortedWords() []string {
 	keys := make([]string, len(im.hashTable))
 
 	for k := range im.hashTable {

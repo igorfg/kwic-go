@@ -1,6 +1,5 @@
 package kwic
 
-import "fmt"
 import "bufio"
 import "os"
 import "log"
@@ -15,8 +14,10 @@ type FileBasedStorageManager struct {
 func (f *FileBasedStorageManager) Init() {
 	var filePath string
 
-	fmt.Print("Enter the path to the input file: ")
-	fmt.Scan(&filePath)
+	// fmt.Print("Enter the path to the input file: ")
+	// fmt.Scan(&filePath)
+
+	filePath = "../resources/papers.txt"
 
 	file, err := os.Open(filePath)
 
