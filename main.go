@@ -20,17 +20,15 @@ func main() {
 		}
 	}
 
-	// sortedWords := im.SortedWords()
-	// wordShift := kwic.WordShift{}
+	sortedWords := im.SortedWords()
+	wordShift := kwic.WordShift{}
 
-	// for _, w := range sortedWords {
-	// 	for _, tuple := range im.OccurencesOfWord(w) {
-
-	// 	}
-	// }
-
-	for i := 0; i < fsm.Length(); i++ {
-		fmt.Println(fsm.Line(i))
+	for _, w := range sortedWords {
+		for _, tuple := range im.OccurencesOfWord(w) {
+			func(line string, pos int) {
+				fmt.Println(strings.Join(wordShift.Shift(strings.Split(line, " "), pos, 0), " "))
+			}(tuple.First.(string), tuple.Second.(int))
+		}
 	}
 
 	fmt.Println("Fim da Execução")
