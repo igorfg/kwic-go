@@ -2,7 +2,7 @@ package kwic
 
 import "bufio"
 import "os"
-import "log"
+import "errors"
 
 // FileBasedStorageManager : struct que herda da interface DataStorageManager
 // para leitura de arquivos
@@ -11,7 +11,7 @@ type FileBasedStorageManager struct {
 }
 
 // Init : Inicializa a estrutura de linhas a partir da leitura de arquivos
-func (f *FileBasedStorageManager) Init() {
+func (f *FileBasedStorageManager) Init() error {
 	var filePath string
 
 	// fmt.Print("Enter the path to the input file: ")
@@ -22,7 +22,7 @@ func (f *FileBasedStorageManager) Init() {
 	file, err := os.Open(filePath)
 
 	if err != nil {
-		log.Fatal(err)
+		return errors.New("Não foi possível abrir o arquivo")
 	}
 	defer file.Close()
 
@@ -30,6 +30,7 @@ func (f *FileBasedStorageManager) Init() {
 	for scanner.Scan() {
 		f.lines = append(f.lines, scanner.Text())
 	}
+	return nil
 }
 
 // Line : Retorna a linha baseada no indice index passado

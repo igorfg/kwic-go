@@ -20,7 +20,6 @@ func shiftRight(words []string, target int) []string {
 		target--
 	}
 	return words
-
 }
 
 func shiftLeft(words []string, target int) []string {

@@ -2,6 +2,7 @@ package kwic
 
 import (
 	"bufio"
+	"io/ioutil"
 	"log"
 	"os"
 	"reflect"
@@ -10,6 +11,7 @@ import (
 )
 
 var fsm DataStorageManager = &FileBasedStorageManager{}
+var dblpsm DataStorageManager = &DBLPStorageManager{}
 var im IndexManager = IndexManager{}
 var numLines int = 0
 
@@ -32,6 +34,39 @@ func TestMain(t *testing.T) {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+
+	//setup DBLPStorageManager
+
+	content := []byte("bonifacio")
+
+	//creating tempfile
+	tmpfile, err := ioutil.TempFile("", "test")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// clean up tempfile after finishing method
+	defer os.Remove(tmpfile.Name())
+
+	//writing content on tempfile
+	if _, err := tmpfile.Write(content); err != nil {
+		log.Fatal(err)
+	}
+
+	if _, err := tmpfile.Seek(0, 0); err != nil {
+		log.Fatal(err)
+	}
+
+	//saving contents of os.Stdin before assignin tempfile contents
+	oldStdin := os.Stdin
+	defer func() { os.Stdin = oldStdin }() // Restore original Stdin
+
+	os.Stdin = tmpfile
+	dblpsm.Init()
+
+	if err := tmpfile.Close(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func TestFileBasedStorageManageInit(t *testing.T) {
@@ -47,7 +82,7 @@ func TestFileBasedStorageManagerLine(t *testing.T) {
 
 	for line := 0; line < fsm.Length(); line++ {
 		if len(fsm.Line(line)) == 0 {
-			t.Errorf("Erro, line length wrong, got: %d in line: %d", fsm.Line(line), line)
+			t.Errorf("Erro, line length wrong, got: %v in line: %v", fsm.Line(line), line)
 			break
 		}
 	}
@@ -147,5 +182,34 @@ func TestWordShiftShift(t *testing.T) {
 		if final[i] != correct[i] {
 			t.Errorf("Erro, Left shifted words wrong, got: %s want: %s", final[i], correct[i])
 		}
+	}
+}
+
+func TestDBLPStorageManagerInit(t *testing.T) {
+	numLines := 30
+	length := dblpsm.Length()
+	t.Logf("Length: %d", dblpsm.Length())
+
+	if length != numLines {
+		t.Errorf("Error, the file is empty or the reading is not correct, got: %d, want: %d", length, numLines)
+	}
+}
+
+func TestDBLPStoreManagerLine(t *testing.T) {
+	title := "Recipient size estimation for induction heating home appliances based on artificial neural networks."
+	line := dblpsm.Line(0)
+
+	if title != line {
+		t.Errorf("Error, the file is empty or the reading is not correct, got: %v, want: %v", line, title)
+	}
+}
+
+func TestDBLPStorageManagerLength(t *testing.T) {
+	numLines := 30
+	length := dblpsm.Length()
+	t.Logf("Length: %d", dblpsm.Length())
+
+	if length != numLines {
+		t.Errorf("Error, the file is empty or the reading is not correct, got: %d, want: %d", length, numLines)
 	}
 }

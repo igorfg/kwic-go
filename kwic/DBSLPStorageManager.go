@@ -1,10 +1,10 @@
 package kwic
 
 import "fmt"
-import "log"
 import "net/http"
 import "encoding/json"
 import "time"
+import "errors"
 
 type DBLPRecord struct {
 	Result struct {
@@ -63,14 +63,20 @@ type DBLPStorageManager struct {
 	lines []string
 }
 
-func (this *DBLPStorageManager) Init() {
+func (this *DBLPStorageManager) Init() error {
 	var query string
+	var err error
 
 	fmt.Print("Enter the DBLP search criteria (such as the author name): ")
 	fmt.Scan(&query)
 	url := "http://dblp.org/search/publ/api?q=" + query + "&format=json"
 	record := new(DBLPRecord)
-	this.lines = makeRequest(url, record)
+	this.lines, err = makeRequest(url, record)
+
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (this *DBLPStorageManager) Line(index int) string {
@@ -81,13 +87,13 @@ func (this *DBLPStorageManager) Length() int {
 	return len(this.lines)
 }
 
-func makeRequest(url string, record *DBLPRecord) []string {
+func makeRequest(url string, record *DBLPRecord) ([]string, error) {
 	client := &http.Client{Timeout: 10 * time.Second}
 	request, err := client.Get(url)
 	var titles []string
 
 	if err != nil {
-		log.Fatal(err)
+		return nil, errors.New("Não foi possível completar a requisição")
 	}
 	defer request.Body.Close()
 
@@ -97,5 +103,5 @@ func makeRequest(url string, record *DBLPRecord) []string {
 		titles = append(titles, hit.Info.Title)
 	}
 
-	return titles
+	return titles, nil
 }

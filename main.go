@@ -52,7 +52,7 @@ func main() {
 	for _, w := range sortedWords {
 		for _, tuple := range im.OccurencesOfWord(w) {
 			func(line string, pos int) {
-				fmt.Println(strings.Join(wordShift.Shift(strings.Split(line, " "), pos, 3), " "))
+				fmt.Println(strings.Join(wordShift.Shift(strings.Split(line, " "), pos, pos), " "))
 			}(tuple.First.(string), tuple.Second.(int))
 		}
 	}
