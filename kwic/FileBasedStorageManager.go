@@ -17,7 +17,7 @@ func (f *FileBasedStorageManager) Init() {
 	// fmt.Print("Enter the path to the input file: ")
 	// fmt.Scan(&filePath)
 
-	filePath = "resources/papers.txt"
+	filePath = "../resources/papers.txt"
 
 	file, err := os.Open(filePath)
 
