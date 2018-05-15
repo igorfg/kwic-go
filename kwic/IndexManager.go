@@ -34,7 +34,7 @@ func (im *IndexManager) OccurencesOfWord(word string) []Tuple {
 }
 
 func (im *IndexManager) SortedWords() []string {
-	keys := make([]string, len(im.hashTable))
+	keys := make([]string, 0)
 
 	for k := range im.hashTable {
 		keys = append(keys, k)

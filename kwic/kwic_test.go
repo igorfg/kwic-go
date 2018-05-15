@@ -100,19 +100,52 @@ func TestIndexManagerSortedWords(t *testing.T) {
 	for pos := 0; pos < len(words); pos++ {
 		im.Hash(words[pos], line, pos)
 	}
+	t.Logf("wods: %d", len(words))
 
 	sortedWords := im.SortedWords()
+
+	t.Logf("sortedWords: %s", sortedWords)
 
 	lineAlphabetic := "igor kwic lindo teste"
 	wordAlphabetic := strings.Split(lineAlphabetic, " ")
 
-	t.Log(sortedWords)
+	t.Logf("wordAlphabetic: %s", wordAlphabetic)
 
-	i := 0
-	for _, w := range sortedWords {
+	for i, w := range sortedWords {
 		if w != wordAlphabetic[i] {
 			t.Errorf("Erro, wrong sort, got: %s want: %s", w, wordAlphabetic[i])
 		}
-		i++
+	}
+}
+
+func TestWordShiftShift(t *testing.T) {
+	wordShift := WordShift{}
+	line := "igor lindo demais gostoso e sensual"
+
+	final := wordShift.Shift(strings.Split(line, " "), 2, 4)
+	correct := []string{"e", "sensual", "igor", "lindo", "|", "demais", "|", "gostoso"}
+
+	for i, _ := range final {
+		if final[i] != correct[i] {
+			t.Errorf("Erro, Right shifted words wrong, got: %s want: %s", final[i], correct[i])
+		}
+	}
+
+	final = wordShift.Shift(strings.Split(line, " "), 3, 1)
+	correct = []string{"demais", "|", "gostoso", "|", "e", "sensual", "igor", "lindo"}
+
+	for i, _ := range final {
+		if final[i] != correct[i] {
+			t.Errorf("Erro, Left shifted words wrong, got: %s want: %s", final[i], correct[i])
+		}
+	}
+
+	final = wordShift.Shift(strings.Split(line, " "), 1, 1)
+	correct = []string{"igor", "|", "lindo", "|", "demais", "gostoso", "e", "sensual"}
+
+	for i, _ := range final {
+		if final[i] != correct[i] {
+			t.Errorf("Erro, Left shifted words wrong, got: %s want: %s", final[i], correct[i])
+		}
 	}
 }
