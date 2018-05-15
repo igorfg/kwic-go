@@ -1,41 +1,33 @@
 package kwic
 
-import "strings"
-
 type WordShift struct{}
 
 func (w *WordShift) Shift(words []string, pos int, target int) []string {
-	l, r := words[0:pos], words[pos:len(words)]
-	if len(strings.Join(l, " ")) < target-5 {
-		return shiftRight(l, r, target)
+	words = append(words[:pos], append([]string{"|"}, append(words[pos:pos+1], append([]string{"|"}, words[pos+1:]...)...)...)...)
+
+	if pos == target {
+		return words
 	}
-	return shiftLeft(l, r, target)
+	if pos < target {
+		return shiftRight(words, target-pos)
+	}
+	return shiftLeft(words, pos-target)
 }
 
-func shiftRight(l []string, r []string, target int) []string {
-	if len(r) == 0 {
-		return l
+func shiftRight(words []string, target int) []string {
+	for target > 0 {
+		words = append(words[len(words)-1:], words[:len(words)-1]...)
+		target--
 	}
+	return words
 
-	r1, r2 := r[0:len(r)-1], r[len(r)-1:len(r)]
-	l1 := append(r2, l...)
-
-	if len(strings.Join(l1, " ")) > target-5 {
-		return append(l, r...)
-	}
-	return shiftRight(l1, r1, target)
 }
 
-func shiftLeft(l []string, r []string, target int) []string {
-	if len(l) == 0 {
-		return r
+func shiftLeft(words []string, target int) []string {
+	for target > 0 {
+		words = append(words[1:], words[0])
+		target--
 	}
+	return words
 
-	l1, l2 := l[0:1], l[1:len(l)]
-	r1 := append(r, l1...)
-
-	if len(strings.Join(l2, " ")) < target-5 {
-		return append(l2, r1...)
-	}
-	return shiftLeft(l2, r1, target)
 }
