@@ -16,7 +16,16 @@ func main() {
 
 	args := os.Args[1:]
 
-	if len(args) != 2 {
+	if len(args) > 0 && args[0] == "-help" {
+		fmt.Println("" +
+			"USAGE: kwic-go <input option> <output option>\n\n" +
+			"INPUT OPTIONS:\n" +
+			"-file Use a file as the input\n" +
+			"-dblp Use dblp search criteria\n\n" +
+			"OUTPUT OPTIONS:\n" +
+			"-terminal Will print output on terminal\n" +
+			"-html Will print out on your browser")
+	} else if len(args) != 2 {
 		fmt.Println("Use the flag -help to get a list of commands")
 	} else {
 		if args[0] == "-file" {
