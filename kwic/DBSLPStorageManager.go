@@ -99,6 +99,9 @@ func makeRequest(url string, record *DBLPRecord) ([]string, error) {
 
 	json.NewDecoder(request.Body).Decode(record)
 
+	if len(record.Result.Hits.Hit) == 0 {
+		return nil, errors.New("Não foi encontrado o registro.")
+	}
 	for _, hit := range record.Result.Hits.Hit {
 		titles = append(titles, hit.Info.Title)
 	}

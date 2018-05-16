@@ -11,9 +11,10 @@ import (
 )
 
 var fsm DataStorageManager = &FileBasedStorageManager{}
-var dblpsm DataStorageManager = &DBLPStorageManager{}
+var dblpsmSuccess DataStorageManager = &DBLPStorageManager{}
 var im IndexManager = IndexManager{}
 var numLines int = 0
+var connectionError error
 
 func TestMain(t *testing.T) {
 	fsm.Init()
@@ -62,7 +63,7 @@ func TestMain(t *testing.T) {
 	defer func() { os.Stdin = oldStdin }() // Restore original Stdin
 
 	os.Stdin = tmpfile
-	dblpsm.Init()
+	connectionError = dblpsmSuccess.Init()
 
 	if err := tmpfile.Close(); err != nil {
 		log.Fatal(err)
@@ -186,30 +187,69 @@ func TestWordShiftShift(t *testing.T) {
 }
 
 func TestDBLPStorageManagerInit(t *testing.T) {
-	numLines := 30
-	length := dblpsm.Length()
-	t.Logf("Length: %d", dblpsm.Length())
+	dblpsmFailure := new(DBLPStorageManager)
+	errorMessage := "Não foi encontrado o registro."
+	connectionErrorMessage := "Não foi possível completar a requisição"
 
-	if length != numLines {
-		t.Errorf("Error, the file is empty or the reading is not correct, got: %d, want: %d", length, numLines)
+	if connectionError != nil && connectionError.Error() != connectionErrorMessage {
+		t.Errorf("Error actual = %v, and Expected = %v.", connectionError.Error(), connectionErrorMessage)
+	}
+
+	content := []byte("aoisjdaoisdj")
+
+	//creating tempfile
+	tmpfile, err := ioutil.TempFile("", "test")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// clean up tempfile after finishing method
+	defer os.Remove(tmpfile.Name())
+
+	//writing content on tempfile
+	if _, err := tmpfile.Write(content); err != nil {
+		log.Fatal(err)
+	}
+
+	if _, err := tmpfile.Seek(0, 0); err != nil {
+		log.Fatal(err)
+	}
+
+	//saving contents of os.Stdin before assignin tempfile contents
+	oldStdin := os.Stdin
+	defer func() { os.Stdin = oldStdin }() // Restore original Stdin
+
+	os.Stdin = tmpfile
+	notFoundError := dblpsmFailure.Init()
+
+	if connectionError == nil && notFoundError.Error() != errorMessage {
+		t.Errorf("Error actual = %v, and Expected = %v.", notFoundError.Error(), errorMessage)
+	}
+
+	if err := tmpfile.Close(); err != nil {
+		log.Fatal(err)
 	}
 }
 
 func TestDBLPStoreManagerLine(t *testing.T) {
-	title := "Recipient size estimation for induction heating home appliances based on artificial neural networks."
-	line := dblpsm.Line(0)
+	if connectionError == nil {
+		title := "Recipient size estimation for induction heating home appliances based on artificial neural networks."
+		line := dblpsmSuccess.Line(0)
 
-	if title != line {
-		t.Errorf("Error, the file is empty or the reading is not correct, got: %v, want: %v", line, title)
+		if title != line {
+			t.Errorf("Error, the file is empty or the reading is not correct, got: %v, want: %v", line, title)
+		}
 	}
 }
 
 func TestDBLPStorageManagerLength(t *testing.T) {
-	numLines := 30
-	length := dblpsm.Length()
-	t.Logf("Length: %d", dblpsm.Length())
+	if connectionError == nil {
+		numLines := 30
+		length := dblpsmSuccess.Length()
+		t.Logf("Length: %d", dblpsmSuccess.Length())
 
-	if length != numLines {
-		t.Errorf("Error, the file is empty or the reading is not correct, got: %d, want: %d", length, numLines)
+		if length != numLines {
+			t.Errorf("Error, the file is empty or the reading is not correct, got: %d, want: %d", length, numLines)
+		}
 	}
 }
