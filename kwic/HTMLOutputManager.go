@@ -84,11 +84,10 @@ func (h *HTMLOutputManager) Exhibit(fileName string) error {
 	}
 
 	dir := "file://"
-
 	pwd, err := os.Getwd()
-
 	dir += pwd + dirToCreate[1:len(dirToCreate)]
 	fmt.Println(dir)
+
 	openbrowser(dir)
 
 	return nil

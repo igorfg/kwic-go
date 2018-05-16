@@ -34,7 +34,7 @@ func main() {
 
 	var dblpsm kwic.DataStorageManager = &kwic.DBLPStorageManager{}
 	var im kwic.IndexManager = kwic.IndexManager{}
-	var h kwic.OutputManager = &kwic.HTMLOutputManager{}
+	var h kwic.OutputManager = &kwic.TerminalOutputManager{}
 
 	var winc []string
 
@@ -65,6 +65,7 @@ func main() {
 	h.Format(winc)
 
 	err := h.Exhibit("teste")
+
 	if err != nil {
 		fmt.Println(err)
 	}
