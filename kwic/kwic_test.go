@@ -16,28 +16,7 @@ var im IndexManager = IndexManager{}
 var numLines int = 0
 var connectionError error
 
-func TestMain(t *testing.T) {
-	fsm.Init()
-	im.Init()
-
-	file, err := os.Open("../resources/papers.txt")
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		numLines++
-	}
-
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
-
-	//setup DBLPStorageManager
-
+func simulateDblpInput() {
 	content := []byte("bonifacio")
 
 	//creating tempfile
@@ -68,6 +47,62 @@ func TestMain(t *testing.T) {
 	if err := tmpfile.Close(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func simulateFsmInput() {
+	content := []byte("../resources/papers.txt")
+
+	//creating tempfile
+	tmpfile, err := ioutil.TempFile("", "test")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// clean up tempfile after finishing method
+	defer os.Remove(tmpfile.Name())
+
+	//writing content on tempfile
+	if _, err := tmpfile.Write(content); err != nil {
+		log.Fatal(err)
+	}
+
+	if _, err := tmpfile.Seek(0, 0); err != nil {
+		log.Fatal(err)
+	}
+
+	//saving contents of os.Stdin before assignin tempfile contents
+	oldStdin := os.Stdin
+	defer func() { os.Stdin = oldStdin }() // Restore original Stdin
+
+	os.Stdin = tmpfile
+	fsm.Init()
+
+	if err := tmpfile.Close(); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func TestMain(t *testing.T) {
+	simulateFsmInput()
+	im.Init()
+
+	file, err := os.Open("../resources/papers.txt")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		numLines++
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	simulateDblpInput()
 }
 
 func TestFileBasedStorageManageInit(t *testing.T) {
