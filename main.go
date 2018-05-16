@@ -1,74 +1,74 @@
 package main
 
 import "fmt"
+import "os"
+import "log"
 import "strings"
 import "github.com/igorfg/kwic-go/kwic"
 
 func main() {
-	// var fsm kwic.DataStorageManager = &kwic.FileBasedStorageManager{}
-	// var im kwic.IndexManager = kwic.IndexManager{}
+	var (
+		storageManager kwic.DataStorageManager
+		indexManager   kwic.IndexManager
+		outPutManager  kwic.OutputManager
+		winc           []string
+	)
 
-	// fsm.Init()
-	// im.Init()
+	args := os.Args[1:]
 
-	// for lineNumber := 0; lineNumber < fsm.Length(); lineNumber++ {
-	// 	line := fsm.Line(lineNumber)
-	// 	words := strings.Split(line, " ")
-	//
-	// 	for pos := 0; pos < len(words); pos++ {
-	// 		im.Hash(words[pos], line, pos)
-	// 	}
-	// }
-	//
-	// sortedWords := im.SortedWords()
-	// wordShift := kwic.WordShift{}
-	//
-	// for _, w := range sortedWords {
-	// 	for _, tuple := range im.OccurencesOfWord(w) {
-	// 		func(line string, pos int) {
-	// 			// winc = append(winc, (strings.Join(wordShift.Shift(strings.Split(line, " "), pos, 0), " ")))
-	// 			fmt.Println(strings.Join(wordShift.Shift(strings.Split(line, " "), pos, 0), " "))
-	// 		}(tuple.First.(string), tuple.Second.(int))
-	// 	}
-	// }
+	if len(args) != 2 {
+		fmt.Println("Use the flag -help to get a list of commands")
+	} else {
+		if args[0] == "-file" {
+			storageManager = &kwic.FileBasedStorageManager{}
+			indexManager = kwic.IndexManager{}
 
-	var dblpsm kwic.DataStorageManager = &kwic.DBLPStorageManager{}
-	var im kwic.IndexManager = kwic.IndexManager{}
-	var h kwic.OutputManager = &kwic.TerminalOutputManager{}
+			storageManager.Init()
+			indexManager.Init()
+		} else if args[0] == "-dblp" {
+			storageManager = &kwic.DBLPStorageManager{}
+			indexManager = kwic.IndexManager{}
 
-	var winc []string
+			storageManager.Init()
+			indexManager.Init()
+		} else {
+			log.Fatal("Invalid input format")
+		}
 
-	dblpsm.Init()
-	im.Init()
+		for lineNumber := 0; lineNumber < storageManager.Length(); lineNumber++ {
+			line := storageManager.Line(lineNumber)
+			words := strings.Split(line, " ")
 
-	for lineNumber := 0; lineNumber < dblpsm.Length(); lineNumber++ {
-		line := dblpsm.Line(lineNumber)
-		words := strings.Split(line, " ")
+			for pos := 0; pos < len(words); pos++ {
+				indexManager.Hash(words[pos], line, pos)
+			}
+		}
 
-		for pos := 0; pos < len(words); pos++ {
-			im.Hash(words[pos], line, pos)
+		if args[1] == "-terminal" {
+			outPutManager = &kwic.TerminalOutputManager{}
+		} else if args[1] == "-html" {
+			outPutManager = &kwic.HTMLOutputManager{}
+		} else {
+			fmt.Println("Invalid output format")
+		}
+
+		sortedWords := indexManager.SortedWords()
+		wordShift := kwic.WordShift{}
+
+		for _, w := range sortedWords {
+			for _, tuple := range indexManager.OccurencesOfWord(w) {
+				func(line string, pos int) {
+					winc = append(winc, (strings.Join(wordShift.Shift(strings.Split(line, " "), pos, 0), " ")))
+				}(tuple.First.(string), tuple.Second.(int))
+			}
+		}
+
+		outPutManager.Format(winc)
+
+		err := outPutManager.Exhibit()
+
+		if err != nil {
+			fmt.Println(err)
 		}
 	}
-
-	sortedWords := im.SortedWords()
-	wordShift := kwic.WordShift{}
-
-	for _, w := range sortedWords {
-		for _, tuple := range im.OccurencesOfWord(w) {
-			func(line string, pos int) {
-				// fmt.Println(strings.Join(wordShift.Shift(strings.Split(line, " "), pos, pos), " "))
-				winc = append(winc, (strings.Join(wordShift.Shift(strings.Split(line, " "), pos, pos), " ")))
-			}(tuple.First.(string), tuple.Second.(int))
-		}
-	}
-
-	h.Format(winc)
-
-	err := h.Exhibit("teste")
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	fmt.Println("Fim da Execução")
 }

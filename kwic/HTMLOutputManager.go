@@ -57,7 +57,7 @@ func (h *HTMLOutputManager) Format(winc []string) {
 	fmt.Println("Fim da Formatação")
 }
 
-func (h *HTMLOutputManager) Exhibit(fileName string) error {
+func (h *HTMLOutputManager) Exhibit() error {
 	if len(h.lines) <= 0 {
 		return errors.New("HTMLOutputManager esta vazio")
 	}
@@ -69,7 +69,7 @@ func (h *HTMLOutputManager) Exhibit(fileName string) error {
 		}
 	}
 
-	dirToCreate := "./outputHTML/" + fileName + ".html"
+	dirToCreate := "./outputHTML/output.html"
 
 	file, err := os.Create(dirToCreate)
 	if err != nil {

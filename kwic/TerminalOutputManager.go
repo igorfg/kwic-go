@@ -18,9 +18,7 @@ func (h *TerminalOutputManager) Format(winc []string) {
 	}
 }
 
-func (h *TerminalOutputManager) Exhibit(title string) error {
-	fmt.Println(title)
-
+func (h *TerminalOutputManager) Exhibit() error {
 	for _, str := range h.lines {
 		_, err := fmt.Println(str)
 
