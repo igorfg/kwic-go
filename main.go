@@ -67,7 +67,7 @@ func main() {
 		for _, w := range sortedWords {
 			for _, tuple := range indexManager.OccurencesOfWord(w) {
 				func(line string, pos int) {
-					winc = append(winc, (strings.Join(wordShift.Shift(strings.Split(line, " "), pos, 0), " ")))
+					winc = append(winc, (strings.Join(wordShift.Shift(strings.Split(line, " "), pos, pos), " ")))
 				}(tuple.First.(string), tuple.Second.(int))
 			}
 		}

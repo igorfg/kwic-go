@@ -31,6 +31,8 @@ func (h *HTMLOutputManager) Format(winc []string) {
 	var cntPipe int
 	var lineFormated string
 
+	h.lines = append(h.lines, "<h1 style=\"text-align: center\">Key Word in Context</h1>")
+	h.lines = append(h.lines, "<h3 style=\"text-align: center\">Autores: <br> Igor Lugon <br> Khalil Carsten </h3>")
 	h.lines = append(h.lines, tableBegin)
 	h.lines = append(h.lines, tbodyBegin)
 
