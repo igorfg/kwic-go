@@ -14,18 +14,19 @@ func main() {
 	// for lineNumber := 0; lineNumber < fsm.Length(); lineNumber++ {
 	// 	line := fsm.Line(lineNumber)
 	// 	words := strings.Split(line, " ")
-
+	//
 	// 	for pos := 0; pos < len(words); pos++ {
 	// 		im.Hash(words[pos], line, pos)
 	// 	}
 	// }
-
+	//
 	// sortedWords := im.SortedWords()
 	// wordShift := kwic.WordShift{}
-
+	//
 	// for _, w := range sortedWords {
 	// 	for _, tuple := range im.OccurencesOfWord(w) {
 	// 		func(line string, pos int) {
+	// 			// winc = append(winc, (strings.Join(wordShift.Shift(strings.Split(line, " "), pos, 0), " ")))
 	// 			fmt.Println(strings.Join(wordShift.Shift(strings.Split(line, " "), pos, 0), " "))
 	// 		}(tuple.First.(string), tuple.Second.(int))
 	// 	}
@@ -33,6 +34,9 @@ func main() {
 
 	var dblpsm kwic.DataStorageManager = &kwic.DBLPStorageManager{}
 	var im kwic.IndexManager = kwic.IndexManager{}
+	var h kwic.OutputManager = &kwic.HTMLOutputManager{}
+
+	var winc []string
 
 	dblpsm.Init()
 	im.Init()
@@ -52,9 +56,17 @@ func main() {
 	for _, w := range sortedWords {
 		for _, tuple := range im.OccurencesOfWord(w) {
 			func(line string, pos int) {
-				fmt.Println(strings.Join(wordShift.Shift(strings.Split(line, " "), pos, pos), " "))
+				// fmt.Println(strings.Join(wordShift.Shift(strings.Split(line, " "), pos, pos), " "))
+				winc = append(winc, (strings.Join(wordShift.Shift(strings.Split(line, " "), pos, pos), " ")))
 			}(tuple.First.(string), tuple.Second.(int))
 		}
+	}
+
+	h.Format(winc)
+
+	err := h.Exhibit("teste")
+	if err != nil {
+		fmt.Println(err)
 	}
 
 	fmt.Println("Fim da Execução")
