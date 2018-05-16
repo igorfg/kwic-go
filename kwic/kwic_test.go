@@ -112,6 +112,7 @@ func TestFileBasedStorageManageInit(t *testing.T) {
 	if length != numLines {
 		t.Errorf("Erro, the file is empty or the reading are not correct, got: %d, want: %d", length, numLines)
 	}
+
 }
 
 func TestFileBasedStorageManagerLine(t *testing.T) {
@@ -128,6 +129,44 @@ func TestFileBasedStorageManagerLength(t *testing.T) {
 
 	if fsm.Length() != numLines {
 		t.Errorf("Erro, length of file is wrong, got: %d in line: %d", fsm.Length(), numLines)
+	}
+}
+
+func TestFileBasedStorageManagerFailInput(t *testing.T) {
+	var fsmFail = &FileBasedStorageManager{}
+	content := []byte("wrong path")
+
+	//creating tempfile
+	tmpfile, err := ioutil.TempFile("", "test")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// clean up tempfile after finishing method
+	defer os.Remove(tmpfile.Name())
+
+	//writing content on tempfile
+	if _, err := tmpfile.Write(content); err != nil {
+		log.Fatal(err)
+	}
+
+	if _, err := tmpfile.Seek(0, 0); err != nil {
+		log.Fatal(err)
+	}
+
+	//saving contents of os.Stdin before assignin tempfile contents
+	oldStdin := os.Stdin
+	defer func() { os.Stdin = oldStdin }() // Restore original Stdin
+
+	os.Stdin = tmpfile
+	inputError := fsmFail.Init()
+
+	if err := tmpfile.Close(); err != nil {
+		log.Fatal(err)
+	}
+
+	if inputError.Error() != "Não foi possível abrir o arquivo" {
+		t.Errorf("Invalid input did not return an error message, got: %v, expected: %v", inputError.Error(), "Não foi possível abrir o arquivo")
 	}
 }
 
