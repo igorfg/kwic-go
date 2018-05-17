@@ -23,7 +23,11 @@ func (cli *CommandLineInterface) Init(storageManager DataStorageManager,
 		cli.checkOutputMethod(&outputManager)
 		indexManager = IndexManager{}
 
-		storageManager.Init()
+		err := storageManager.Init()
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+
 		indexManager.Init()
 
 		sortedWords := indexWords(&storageManager, &indexManager)
