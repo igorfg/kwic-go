@@ -31,6 +31,8 @@ func (h *HTMLOutputManager) Format(winc []string) {
 	var cntPipe int
 	var lineFormated string
 
+	h.lines = append(h.lines, "<h1 style=\"text-align: center\">Key Word in Context</h1>")
+	h.lines = append(h.lines, "<h3 style=\"text-align: center\">Autores: <br> Igor Figueira <br> Khalil Carsten </h3>")
 	h.lines = append(h.lines, tableBegin)
 	h.lines = append(h.lines, tbodyBegin)
 
@@ -85,7 +87,7 @@ func (h *HTMLOutputManager) Exhibit() error {
 
 	dir := "file://"
 	pwd, err := os.Getwd()
-	dir += pwd + dirToCreate[1:len(dirToCreate)]
+	dir += pwd + dirToCreate[1:]
 	fmt.Println(dir)
 
 	openbrowser(dir)

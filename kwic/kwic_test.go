@@ -13,6 +13,7 @@ import (
 var fsm DataStorageManager = &FileBasedStorageManager{}
 var dblpsmSuccess DataStorageManager = &DBLPStorageManager{}
 var im IndexManager = IndexManager{}
+var tout OutputManager = &TerminalOutputManager{}
 var numLines int = 0
 var connectionError error
 
@@ -235,7 +236,7 @@ func TestWordShiftShift(t *testing.T) {
 	final := wordShift.Shift(strings.Split(line, " "), 2, 4)
 	correct := []string{"e", "sensual", "igor", "lindo", "|", "demais", "|", "gostoso"}
 
-	for i, _ := range final {
+	for i := range final {
 		if final[i] != correct[i] {
 			t.Errorf("Erro, Right shifted words wrong, got: %s want: %s", final[i], correct[i])
 		}
@@ -244,7 +245,7 @@ func TestWordShiftShift(t *testing.T) {
 	final = wordShift.Shift(strings.Split(line, " "), 3, 1)
 	correct = []string{"demais", "|", "gostoso", "|", "e", "sensual", "igor", "lindo"}
 
-	for i, _ := range final {
+	for i := range final {
 		if final[i] != correct[i] {
 			t.Errorf("Erro, Left shifted words wrong, got: %s want: %s", final[i], correct[i])
 		}
@@ -253,7 +254,7 @@ func TestWordShiftShift(t *testing.T) {
 	final = wordShift.Shift(strings.Split(line, " "), 1, 1)
 	correct = []string{"igor", "|", "lindo", "|", "demais", "gostoso", "e", "sensual"}
 
-	for i, _ := range final {
+	for i := range final {
 		if final[i] != correct[i] {
 			t.Errorf("Erro, Left shifted words wrong, got: %s want: %s", final[i], correct[i])
 		}
@@ -326,4 +327,15 @@ func TestDBLPStorageManagerLength(t *testing.T) {
 			t.Errorf("Error, the file is empty or the reading is not correct, got: %d, want: %d", length, numLines)
 		}
 	}
+}
+
+func TestTerminalOutputManagerFormat(t *testing.T) {
+	winc := []string{"palavra |palavra2| palavra3", "word |word2| word3"}
+	tout.Format(winc)
+	err := tout.Exhibit()
+
+	if err != nil {
+		t.Errorf("Error, the file is empty for html")
+	}
+
 }

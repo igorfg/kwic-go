@@ -1,11 +1,13 @@
 package kwic
 
-import "github.com/igorfg/kwic-go/tuple"
-import "sort"
-import "os"
-import "bufio"
-import "regexp"
-import "strings"
+import (
+	"bufio"
+	"os"
+	"regexp"
+	"sort"
+
+	"github.com/igorfg/kwic-go/tuple"
+)
 
 // Tuple : criacao de uma struct do tipo tupla
 type Tuple tuple.Tuple
@@ -13,16 +15,18 @@ type Tuple tuple.Tuple
 // IndexManager : struct para armazenar o hash de palavras
 type IndexManager struct {
 	hashTable map[string][]Tuple
-	stopWords []string
+	stopWords map[string]bool
 }
 
 func (im *IndexManager) Init() {
 	file, _ := os.Open("resources/stopwords.txt")
 	defer file.Close()
 
+	im.stopWords = make(map[string]bool)
+
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		im.stopWords = append(im.stopWords, scanner.Text())
+		im.stopWords[scanner.Text()] = true
 	}
 
 	im.hashTable = make(map[string][]Tuple)
@@ -60,10 +64,10 @@ func (im *IndexManager) SortedWords() []string {
 }
 
 func (im *IndexManager) isStopWord(word string) bool {
-	for _, stopWord := range im.stopWords {
-		if strings.EqualFold(word, stopWord) {
-			return true
-		}
+	_, exist := im.stopWords[word]
+
+	if exist {
+		return true
 	}
 	return false
 }
