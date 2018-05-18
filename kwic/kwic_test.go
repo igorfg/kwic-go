@@ -337,5 +337,24 @@ func TestTerminalOutputManagerFormat(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error, the file is empty for html")
 	}
+}
 
+func TestCliInterface(t *testing.T) {
+	var (
+		size             int
+		expectedSize     int
+		storageManager   DataStorageManager
+		indexManager     IndexManager
+		outputManager    OutputManager
+		cliInterfaceHelp CommandLineInterface
+	)
+	cliInterfaceHelp = CommandLineInterface{}
+	os.Args = []string{"", "-help"}
+	cliInterfaceHelp.Init(storageManager, indexManager, outputManager)
+	size = len(cliInterfaceHelp.args)
+	expectedSize = 1
+
+	if size != expectedSize {
+		t.Errorf("Error, more than one value was sent as argument, got: %d, want: %d", size, expectedSize)
+	}
 }
