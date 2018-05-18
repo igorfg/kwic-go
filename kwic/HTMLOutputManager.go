@@ -1,3 +1,5 @@
+//+build html
+
 package kwic
 
 import (
@@ -9,11 +11,11 @@ import (
 	"runtime"
 )
 
-type HTMLOutputManager struct {
+type OutputManager struct {
 	lines []string
 }
 
-func (h *HTMLOutputManager) Format(winc []string) {
+func (h *OutputManager) Format(winc []string) {
 	const tableBegin = "<table>"
 	const tableEnd = "</table>"
 	const tbodyBegin = "<tbody>"
@@ -59,9 +61,9 @@ func (h *HTMLOutputManager) Format(winc []string) {
 	fmt.Println("Fim da Formatação")
 }
 
-func (h *HTMLOutputManager) Exhibit() error {
+func (h *OutputManager) Exhibit() error {
 	if len(h.lines) <= 0 {
-		return errors.New("HTMLOutputManager esta vazio")
+		return errors.New("OutputManager esta vazio")
 	}
 
 	if _, err := os.Stat("./outputHTML"); os.IsNotExist(err) {

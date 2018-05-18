@@ -1,14 +1,16 @@
+//+build terminal
+
 package kwic
 
 import (
 	"fmt"
 )
 
-type TerminalOutputManager struct {
+type OutputManager struct {
 	lines []string
 }
 
-func (h *TerminalOutputManager) Format(winc []string) {
+func (h *OutputManager) Format(winc []string) {
 	maxSpacement := BiggerSpace(winc)
 
 	for _, str := range winc {
@@ -18,7 +20,7 @@ func (h *TerminalOutputManager) Format(winc []string) {
 	}
 }
 
-func (h *TerminalOutputManager) Exhibit() error {
+func (h *OutputManager) Exhibit() error {
 	for _, str := range h.lines {
 		_, err := fmt.Println(str)
 

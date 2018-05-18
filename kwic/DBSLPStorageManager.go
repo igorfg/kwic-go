@@ -1,3 +1,5 @@
+//+build dblp
+
 package kwic
 
 import "fmt"
@@ -59,11 +61,11 @@ type DBLPRecord struct {
 	} `json:"result"`
 }
 
-type DBLPStorageManager struct {
+type DataStorageManager struct {
 	lines []string
 }
 
-func (this *DBLPStorageManager) Init() error {
+func (this *DataStorageManager) Init() error {
 	var query string
 	var err error
 
@@ -79,11 +81,11 @@ func (this *DBLPStorageManager) Init() error {
 	return nil
 }
 
-func (this *DBLPStorageManager) Line(index int) string {
+func (this *DataStorageManager) Line(index int) string {
 	return this.lines[index]
 }
 
-func (this *DBLPStorageManager) Length() int {
+func (this *DataStorageManager) Length() int {
 	return len(this.lines)
 }
 
